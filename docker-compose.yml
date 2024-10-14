@@ -2,8 +2,8 @@ services:
   nginx:
     container_name: "ready-addon-nginx"
     build:
-      context: backend/dockerfiles
-      dockerfile: backend/dockerfiles/nginx.dockerfile
+      context: ./backend/dockerfiles
+      dockerfile: nginx.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
@@ -45,8 +45,8 @@ services:
   php:
     container_name: "ready-addon-php"
     build:
-      context: backend/dockerfiles
-      dockerfile: backend/dockerfiles/php.dockerfile
+      context: ./backend/dockerfiles
+      dockerfile: php.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
@@ -109,8 +109,8 @@ services:
   composer:
     container_name: "ready-addon-composer"
     build:
-      context: backend/dockerfiles
-      dockerfile: backend/dockerfiles/php.dockerfile
+      context: ./backend/dockerfiles
+      dockerfile: php.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
@@ -125,8 +125,8 @@ services:
   artisan:
     container_name: "ready-addon-artisan"
     build:
-      context: backend/dockerfiles
-      dockerfile: backend/dockerfiles/php.dockerfile
+      context: ./backend/dockerfiles
+      dockerfile: php.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
@@ -151,13 +151,13 @@ services:
     stdin_open: true
     container_name: "ready-addon-vue"
     build:
-      context: frontend/dockerfiles
-      dockerfile: frontend/dockerfiles/node.dockerfile
+      context: ./frontend/dockerfiles
+      dockerfile: node.dockerfile
     volumes:
       - /app/node_modules
       - ../frontend-code:/var/www/html/
     networks:
-      - app-network
+      - ready-addon
 
 volumes:
   postgresql:
