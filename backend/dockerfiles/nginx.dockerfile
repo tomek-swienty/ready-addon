@@ -15,6 +15,4 @@ RUN sed -i "s/user  nginx/user laravel/g" /etc/nginx/nginx.conf
 
 ADD nginx/default.conf /etc/nginx/conf.d/
 
-EXPOSE 9000
-
 RUN mkdir -p /var/www/html
