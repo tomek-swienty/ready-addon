@@ -1,5 +1,5 @@
 services:
-  routing :
+  ready-addon-routing:
     container_name: "ready-addon-routing"
     build:
       context: ./routing
@@ -10,15 +10,15 @@ services:
     ports:
       - "${ROUTING_FORWARD_NGINX_PORT:-80}:80"
     depends_on:
-      - php
-      - redis
-      - postgresql
-      - vue
+      - ready-addon-backend-nginx
+      - ready-addon-backend-php
+      - ready-addon-backend-redis
+      - ready-addon-backend-postgresql
     networks:
       - ready-addon
-    restart: always
+    restart: unless-stopped
 
-  nginx :
+  ready-addon-backend-nginx:
     container_name: "ready-addon-backend-nginx"
     build:
       context: ./backend/dockerfiles
@@ -31,15 +31,14 @@ services:
     volumes:
       - ./backend/src:/var/www/html:delegated
     depends_on:
-      - php
-      - redis
-      - postgresql
-      - vue
+      - ready-addon-backend-php
+      - ready-addon-backend-redis
+      - ready-addon-backend-postgresql
     networks:
       - ready-addon
     restart: unless-stopped
 
-  php:
+  ready-addon-backend-php:
     container_name: "ready-addon-backend-php"
     build:
       context: ./backend/dockerfiles
@@ -60,7 +59,7 @@ services:
       SERVICE_NAME: backend
       SERVICE_TAGS: dev
 
-  postgresql:
+  ready-addon-backend-postgresql:
     image: postgres:16.2
     container_name: "ready-addon-backend-postgresql"
     environment:
@@ -74,54 +73,22 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./backend/postgresql/data:/var/lib/postgresql/data/pgdata
+      - ./backend/postgresql/data:/var/lib/postgresql/data
       - ./backend/postgresql/logs:/var/log/postgresql
     ports:
       - "${BACKEND_FORWARD_DB_PORT:-5432}:5432"
     networks:
       - ready-addon
-    restart: always
+    restart: unless-stopped
     shm_size: 128mb
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: "ready-addon-backend-pgadmin"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: homestead@mail.com
-      PGADMIN_DEFAULT_PASSWORD: secret
-    volumes:
-      - ./backend/pgadmin:/var/lib/pgadmin
-    ports:
-      - "${BACKEND_FORWARD_PGADMIN_PORT:-8090}:80"
-    depends_on:
-      postgresql:
-        condition: service_healthy
-    networks:
-      - ready-addon
-    restart: unless-stopped
-
-  adminer:
-    container_name: "ready-addon-backend-adminer"
-    image: adminer
-    ports:
-      - "${BACKEND_FORWARD_ADMINER_PORT:-8091}:80"
-    environment:
-      ADMINER_DEFAULT_DB_DRIVER: pgsql
-      ADMINER_DEFAULT_SERVER: postgresql
-      ADMINER_DEFAULT_DB_NAME: ${BACKEND_DB_DATABASE}
-    depends_on:
-      - postgresql
-    networks:
-      - ready-addon
-    restart: unless-stopped
-
-  redis:
+  ready-addon-backend-redis:
     container_name: "ready-addon-backend-redis"
     image: redis:alpine
     ports:
       - "${BACKEND_FORWARD_REDIS_PORT:-6379}:6379"
     volumes:
-      - redis:/data
+      - ./backend/redis/data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       retries: 3
@@ -130,7 +97,7 @@ services:
       - ready-addon
     restart: unless-stopped
 
-  composer:
+  ready-addon-backend-composer:
     container_name: "ready-addon-backend-composer"
     build:
       context: ./backend/dockerfiles
@@ -141,12 +108,12 @@ services:
     volumes:
       - ./backend/src:/var/www/html
     depends_on:
-      - php
+      - ready-addon-backend-php
     entrypoint: ["composer", "--ignore-platform-reqs"]
     networks:
       - ready-addon
 
-  artisan:
+  ready-addon-backend-artisan:
     container_name: "ready-addon-backend-artisan"
     build:
       context: ./backend/dockerfiles
@@ -157,19 +124,11 @@ services:
     volumes:
       - ./backend/src:/var/www/html:delegated
     depends_on:
-      - postgresql
-      - redis
+      - ready-addon-backend-postgresql
+      - ready-addon-backend-redis
     entrypoint: ["php", "/var/www/html/artisan"]
     networks:
       - ready-addon
-
-volumes:
-  postgresql:
-    driver: local
-  pgadmin:
-    driver: local
-  redis:
-    driver: local
 
 networks:
   ready-addon:
