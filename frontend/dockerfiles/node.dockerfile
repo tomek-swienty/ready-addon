@@ -7,6 +7,8 @@ COPY package*.json ./
 RUN npm install
 RUN npm run build
 
+RUN npm install -g @vue/cli
+
 FROM nginx as production-stage
 
 EXPOSE 3000

@@ -59,7 +59,7 @@ To buduje obraz plus kontenery - trochę potrwa
 2. Wpisz
 
 ```
-docker compose run --rm composer create-project laravel/laravel .
+docker compose run --rm ready-addon-backend-composer create-project laravel/laravel .
 ```
 
 Komenda utworzy szkielet aplikacji w bieżącym katalogu.

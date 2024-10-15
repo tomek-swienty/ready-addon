@@ -34,6 +34,7 @@ RUN apk add --no-cache \
     libpng-dev \
     jpeg-dev \
     oniguruma-dev \
+    supervisor  \
     curl-dev \
     freetype-dev \
     libpq-dev
@@ -48,8 +49,8 @@ RUN mkdir -p /usr/src/php/ext/redis \
     && echo 'redis' >> /usr/src/php-available-exts \
     && docker-php-ext-install redis
 
-USER laravel
+RUN apk cache clean
 
-EXPOSE 9000
+USER laravel
 
 CMD ["php-fpm", "-y", "/usr/local/etc/php-fpm.conf", "-R"]
