@@ -1,12 +1,9 @@
-FROM node:22-alpine as build-stage
+FROM node:22-alpine
 
 WORKDIR /var/www/html
 
 COPY package*.json ./
 
 RUN npm install
-RUN npm run build
 
-#COPY --from=build-stage /app/dist /app
-
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
