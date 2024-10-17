@@ -3,7 +3,8 @@ services:
     stdin_open: true
     container_name: "ready_addon_frontend_vue"
     build:
-      dockerfile: node.dockerfile
+      context: ../
+      dockerfile: ./dockerfiles/node.dockerfile
     volumes:
       - ../app:/var/www/html:delegated
     networks:
@@ -12,7 +13,8 @@ services:
   frontend_nginx:
     container_name: "ready_addon_frontend_nginx"
     build:
-      dockerfile: nginx.dockerfile
+      context: ../
+      dockerfile: ./dockerfiles/nginx.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
