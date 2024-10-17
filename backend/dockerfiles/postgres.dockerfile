@@ -1,0 +1,1 @@
+FROM postgres:${PG_SERVER_VERSION:-latest}

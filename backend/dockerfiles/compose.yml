@@ -1,29 +1,8 @@
 services:
-  routing:
-    container_name: "ready_addon_routing"
-    build:
-      context: ./routing
-      dockerfile: nginx.dockerfile
-      args:
-        - UID=${UID:-1000}
-        - GID=${GID:-1000}
-    ports:
-      - "8787:80"
-    volumes:
-      - ./routing/nginx/log:/var/log/nginx/
-    depends_on:
-      - backend_nginx
-      - backend_php
-      - backend_redis
-      - backend_postgresql
-    networks:
-      - ready_addon
-    restart: unless-stopped
-
   backend_nginx:
     container_name: "ready_addon_backend_nginx"
     build:
-      context: ./backend/dockerfiles
+      #context: ./backend/dockerfiles
       dockerfile: nginx.dockerfile
       args:
         - UID=${UID:-1000}
@@ -31,8 +10,8 @@ services:
     ports:
       - "9012:80"
     volumes:
-      - ./backend/src:/var/www/html:delegated
-      - ./backend/nginx/log:/var/log/nginx/
+      - ../app:/var/www/html:delegated
+      - ../mount/nginx/log:/var/log/nginx/
     depends_on:
       - backend_php
       - backend_redis
@@ -44,7 +23,7 @@ services:
   backend_php:
     container_name: "ready_addon_backend_php"
     build:
-      context: ./backend/dockerfiles
+      #context: ./backend/dockerfiles
       dockerfile: php.dockerfile
       args:
         - UID=${UID:-1000}
@@ -52,8 +31,8 @@ services:
     ports:
       - "9099:9000"
     volumes:
-      - ./backend/src:/var/www/html:delegated
-      - ./backend/dockerfiles/configs/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ../app:/var/www/html:delegated
+      - ./configs/php.ini:/usr/local/etc/php/conf.d/custom.ini
     networks:
       - ready_addon
     restart: unless-stopped
@@ -63,8 +42,9 @@ services:
       SERVICE_TAGS: dev
 
   backend_postgresql:
-    image: postgres:16.2
     container_name: "ready_addon_backend_postgresql"
+    build:
+      dockerfile: postgres.dockerfile
     environment:
       POSTGRES_DB: ${BACKEND_DB_DATABASE}
       POSTGRES_USER: ${BACKEND_DB_USERNAME}
@@ -76,8 +56,8 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./backend/postgresql/data:/var/lib/postgresql/data
-      - ./backend/postgresql/logs:/var/log/postgresql
+      - ../mount/postgresql/data:/var/lib/postgresql/data
+      - ../mount/postgresql/logs:/var/log/postgresql
     ports:
       - "5499:5432"
     networks:
@@ -87,11 +67,13 @@ services:
 
   backend_redis:
     container_name: "ready_addon_backend_redis"
-    image: redis:alpine
+    build:
+      dockerfile: redis.dockerfile
     ports:
       - "6479:6379"
     volumes:
-      - ./backend/redis/data:/data
+      - ../mount/redis/data:/data
+      - ../mount/redis/logs:/var/log/redis/
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       retries: 3
@@ -103,13 +85,13 @@ services:
   backend_composer:
     container_name: "ready_addon_backend_composer"
     build:
-      context: ./backend/dockerfiles
+      #context: ./backend/dockerfiles
       dockerfile: php.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
     volumes:
-      - ./backend/src:/var/www/html
+      - ../app:/var/www/html:delegated
     depends_on:
       - backend_php
     entrypoint: ["composer", "--ignore-platform-reqs"]
@@ -119,52 +101,16 @@ services:
   backend_artisan:
     container_name: "ready_addon_backend_artisan"
     build:
-      context: ./backend/dockerfiles
+      #context: ./backend/dockerfiles
       dockerfile: php.dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
     volumes:
-      - ./backend/src:/var/www/html:delegated
+      - ../app:/var/www/html:delegated
     depends_on:
       - backend_postgresql
       - backend_redis
     entrypoint: ["php", "/var/www/html/artisan"]
     networks:
       - ready_addon
-
-  frontend_node:
-    stdin_open: true
-    container_name: "ready_addon_frontend_vue"
-    build:
-      context: ./frontend/dockerfiles
-      dockerfile: node.dockerfile
-    volumes:
-      - ./frontend/src:/var/www/html:delegated
-    networks:
-      - ready-addon
-
-  frontend_nginx:
-    container_name: "ready_addon_frontend_nginx"
-    build:
-      context: ./frontend/dockerfiles
-      dockerfile: nginx.dockerfile
-      args:
-        - UID=${UID:-1000}
-        - GID=${GID:-1000}
-    ports:
-      - "3000:80"
-    volumes:
-      - ./frontend/src:/var/www/html:delegated
-      - ./frontend/nginx/log:/var/log/nginx/
-    depends_on:
-      - backend_php
-      - backend_redis
-      - backend_postgresql
-    networks:
-      - ready_addon
-    restart: unless-stopped
-
-networks:
-  ready_addon:
-    driver: bridge

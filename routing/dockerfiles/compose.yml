@@ -2,7 +2,6 @@ services:
   routing:
     container_name: "ready_addon_routing"
     build:
-      context: ./routing
       dockerfile: nginx.dockerfile
       args:
         - UID=${UID:-1000}
