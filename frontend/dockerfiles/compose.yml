@@ -7,8 +7,11 @@ services:
       dockerfile: ./dockerfiles/node.dockerfile
     volumes:
       - ../app:/var/www/html:delegated
+    ports:
+      - "3022:3021"
     networks:
       - ready_addon
+    command: npm install
 
   frontend_nginx:
     container_name: "ready_addon_frontend_nginx"

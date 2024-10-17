@@ -6,6 +6,8 @@ COPY app/package.json /var/www/html
 
 WORKDIR /var/www/html
 
-RUN npm install --verbose
+RUN npm run build
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+EXPOSE 3021
+
+CMD ["npm", "run", "dev"]
