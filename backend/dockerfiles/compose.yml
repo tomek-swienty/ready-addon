@@ -1,7 +1,3 @@
-include:
-  - ./routing/dockerfiles/compose.yaml
-  - ./backend/dockerfiles/compose.yaml
-  - ./frontend/dockerfiles/compose.yaml
 services:
   routing:
     container_name: "ready_addon_routing"

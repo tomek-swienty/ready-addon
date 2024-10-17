@@ -1,0 +1,21 @@
+services:
+  routing:
+    container_name: "ready_addon_routing"
+    build:
+      context: ./routing
+      dockerfile: nginx.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    ports:
+      - "8787:80"
+    volumes:
+      - ../mount/nginx/log:/var/log/nginx/
+    depends_on:
+      - backend_nginx
+      - backend_php
+      - backend_redis
+      - backend_postgresql
+    networks:
+      - ready_addon
+    restart: unless-stopped
