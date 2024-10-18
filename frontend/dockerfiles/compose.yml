@@ -7,11 +7,21 @@ services:
       dockerfile: ./dockerfiles/node.dockerfile
     volumes:
       - ../app:/var/www/html:delegated
-    ports:
-      - "3022:3021"
     networks:
       - ready_addon
-    command: npm install
+    #command: npm install & npm build
+
+  frontend_npm:
+    stdin_open: true
+    container_name: "ready_addon_frontend_npm"
+    build:
+      context: ../
+      dockerfile: ./dockerfiles/node.dockerfile
+    volumes:
+      - ../app:/var/www/html:delegated
+    networks:
+      - ready_addon
+    entrypoint: ["/usr/local/bin/npm"]
 
   frontend_nginx:
     container_name: "ready_addon_frontend_nginx"
@@ -22,9 +32,9 @@ services:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
     ports:
-      - "3000:80"
+      - "3022:8080"
     volumes:
-      - ../app:/var/www/html:delegated
+      - ../app/dist:/var/www/html:delegated
       - ../mount/nginx/log:/var/log/nginx/
     depends_on:
       - backend_php
