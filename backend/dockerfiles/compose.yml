@@ -37,9 +37,6 @@ services:
       - ready_addon
     restart: unless-stopped
     tty: true
-    environment:
-      SERVICE_NAME: backend
-      SERVICE_TAGS: dev
 
   backend_postgresql:
     container_name: "ready_addon_backend_postgresql"
