@@ -6,8 +6,10 @@ COPY app/package.json /var/www/html
 
 WORKDIR /var/www/html
 
-#RUN npm install
+RUN npm install
 
 #RUN npm run build
+
+EXPOSE 3077
 
 CMD ["npm", "run", "serve"]

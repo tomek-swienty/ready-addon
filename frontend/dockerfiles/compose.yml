@@ -1,19 +1,7 @@
 services:
-  frontend_node:
+  frontend_app:
     stdin_open: true
-    container_name: "ready_addon_frontend_vue"
-    build:
-      context: ../
-      dockerfile: ./dockerfiles/node.dockerfile
-    volumes:
-      - ../app:/var/www/html:delegated
-    networks:
-      - ready_addon
-    #command: npm install & npm build
-
-  frontend_npm:
-    stdin_open: true
-    container_name: "ready_addon_frontend_npm"
+    container_name: "ready_addon_frontend_app"
     build:
       context: ../
       dockerfile: ./dockerfiles/node.dockerfile
@@ -22,6 +10,7 @@ services:
     networks:
       - ready_addon
     entrypoint: ["/usr/local/bin/npm"]
+    #command: npm install & npm build
 
   frontend_nginx:
     container_name: "ready_addon_frontend_nginx"
@@ -34,7 +23,7 @@ services:
     ports:
       - "3022:8080"
     volumes:
-      - ../app/dist:/var/www/html:delegated
+      - ../app:/var/www/html:delegated
       - ../mount/nginx/log:/var/log/nginx/
     depends_on:
       - backend_php
