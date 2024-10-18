@@ -18,3 +18,6 @@ services:
     networks:
       - ready_addon
     restart: unless-stopped
+    links:
+      - backend_nginx
+      - frontend_nginx

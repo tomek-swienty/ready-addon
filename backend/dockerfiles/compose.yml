@@ -19,6 +19,8 @@ services:
     networks:
       - ready_addon
     restart: unless-stopped
+    links:
+      - backend_php
 
   backend_php:
     container_name: "ready_addon_backend_php"
@@ -28,8 +30,6 @@ services:
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    ports:
-      - "9099:9000"
     volumes:
       - ../app:/var/www/html:delegated
       - ./configs/php.ini:/usr/local/etc/php/conf.d/custom.ini
