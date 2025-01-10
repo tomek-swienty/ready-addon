@@ -27,7 +27,7 @@ Nie musisz mieć lokalnie php etc 😎
 
 ---
 
-Na cele testów posłuży moje repo ale na przyszł zrób swoje  👍
+Na cele testów posłuży moje repo ale na przyszł zrób swoje (fork)  👍
 
 ### Klonowanie projektu
 
@@ -39,13 +39,15 @@ Przejdź do katalogu gdzie chcesz rozwijać swój addon i sklonuj przykładowy p
 gh repo clone tomek-swienty/ready-addon
 ```
 
-### Budowa kontenera
+### Budowa kontenerów
 
 ---
 
 Przejdź do głównego katalogu czyli tam gdzie nastąpiło klonowanie repo i jest plik docker-compose.yml i wykonaj
 
-`docker-compose up -d --build`
+```
+docker-compose up -d --build
+```
 
 To buduje obraz plus kontenery - trochę potrwa
 
@@ -55,11 +57,26 @@ To buduje obraz plus kontenery - trochę potrwa
 
 <span style="color:red">Nie wykonuj tego ponownie jeśli Twoje rozszerzenie ma już kod!</span>.
 
-1. Przejdź do katalogu src
-2. Wpisz
+Inicjalizacja projektu laravel:
+
+1. Przejdź do katalogu backend\app
+2. Usuwamy wszystko (łącznie z plikami gitignore itd)
+3. Wpisz
 
 ```
-docker compose run --rm ready-addon-backend-composer create-project laravel/laravel .
+docker compose run --rm backend_composer create-project --prefer-dist laravel/laravel .
+```
+
+```
+docker compose run --rm backend_composer require laravel/breeze
+```
+
+```
+docker compose run --rm backend_composer require laravel/sanctum
+```
+
+```
+docker compose run --rm backend_artisan breeze:install
 ```
 
 Komenda utworzy szkielet aplikacji w bieżącym katalogu.
@@ -68,4 +85,44 @@ Oczekiwany rezultat
 
 ![image.png](assets/image.png)
 
-Przejdź do katalogu dockerfiles
+
+![img_1.png](assets/img_1.png)
+
+Instalacja bibliotek react
+
+```
+docker compose run --rm frontend_app init -y
+```
+
+```
+docker compose run --rm frontend_app install 
+```
+
+```
+docker compose run --rm frontend_app run build 
+```
+
+```
+docker compose run --rm frontend_app  build 
+```
+
+
+
+
+Wszystko z poziomu katalogu ready-addon
+
+Kontenery
+docker compose up -d --build
+
+
+Laravel
+docker compose run --rm backend_composer create-project laravel/laravel .
+
+Breeze
+docker compose run --rm backend_composer require laravel/breeze
+
+docker compose run --rm backend_artisan breeze:install
+
+-> react
+-> no features
+-> phpunit
