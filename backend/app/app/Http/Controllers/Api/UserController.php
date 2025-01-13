@@ -15,7 +15,6 @@ class UserController extends Controller
 
     public function me()
     {
-        // use auth()->user() to get authenticated user data
 
         return response()->json([
                                     'meta' => [
