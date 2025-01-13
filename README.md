@@ -116,13 +116,14 @@ docker compose up -d --build
 
 
 Laravel
-docker compose run --rm backend_composer create-project laravel/laravel .
+docker compose run --rm backend_composer create-project --prefer-dist laravel/laravel .
 
-Breeze
-docker compose run --rm backend_composer require laravel/breeze
 
-docker compose run --rm backend_artisan breeze:install
+///
+docker compose run --rm backend_composer install
 
--> react
--> no features
--> phpunit
+docker compose run --rm backend_artisan migrate
+
+docker compose run --rm backend_artisan key:generate
+
+docker compose run --rm backend_artisan jwt:secret
