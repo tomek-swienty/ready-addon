@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
@@ -17,26 +18,31 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // validate the incoming request
-        // set every field as required
-        // set email field so it only accept the valid email format
+       //return response()->json(['error' => 'asdasdsad'], 400);
 
-        $this->validate($request, [
-            'name' => 'required|string|min:2|max:255',
-            'email' => 'required|string|email:rfc,dns|max:255|unique:users',
-            'password' => 'required|string|min:6|max:255',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'name'      => 'required|string|max:255',
+                'email'     => 'required|string|max:255|unique:users',
+                'password'  => 'required|string'
+            ]);
 
-        // if the request valid, create user
+            if ($validator->fails()) {
+                return response()->json($validator->errors());
+            }
 
-        $user = $this->user::create([
-                                        'name' => $request['name'],
-                                        'email' => $request['email'],
-                                        'password' => bcrypt($request['password']),
-                                    ]);
+            $user = $this->user::create([
+                                            'name' => $request['name'],
+                                            'email' => $request['email'],
+                                            'password' => bcrypt($request['password']),
+                                        ]);
 
-        // login the user immediately and generate the token
-        $token = auth()->login($user);
+            // login the user immediately and generate the token
+            $token = auth()->login($user);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+
 
         // return the response as json
         return response()->json([
@@ -58,10 +64,16 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $this->validate($request, [
-            'email' => 'required|string',
-            'password' => 'required|string',
+
+        $validator = Validator::make($request->all(), [
+            'email'     => 'required|string',
+            'password'  => 'required|string'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
 
         // attempt a login (validate the credentials provided)
         $token = auth()->attempt([
