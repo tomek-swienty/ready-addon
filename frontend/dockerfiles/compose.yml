@@ -12,6 +12,18 @@ services:
     entrypoint: ["/usr/local/bin/npm"]
     #command: npm install & npm build
 
+  frontend_app_npx:
+    stdin_open: true
+    container_name: "ready_addon_frontend_app_npx"
+    build:
+      context: ../
+      dockerfile: ./dockerfiles/node.dockerfile
+    volumes:
+      - ../app:/var/www/html:delegated
+    networks:
+      - ready_addon
+    entrypoint: ["/usr/local/bin/npx"]
+
   frontend_nginx:
     container_name: "ready_addon_frontend_nginx"
     build:
