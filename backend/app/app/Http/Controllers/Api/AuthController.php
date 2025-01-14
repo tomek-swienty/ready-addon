@@ -93,4 +93,19 @@ class AuthController extends Controller {
                                 ]);
     }
 
+
+    public function user() {
+
+        return response()->json([
+                                    'meta' => [
+                                        'code' => 200,
+                                        'status' => 'success',
+                                        'message' => 'User fetched successfully!',
+                                    ],
+                                    'data' => [
+                                        'user' => auth()->user(),
+                                    ],
+                                ]);
+    }
+
 }

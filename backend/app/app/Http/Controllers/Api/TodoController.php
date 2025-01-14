@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Todo;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Crypt;
 
 class TodoController extends Controller
 {
@@ -15,6 +17,20 @@ class TodoController extends Controller
 
     public function index()
     {
+
+        // http://localhost/ready/api.php/REST/v1/events
+
+        $response = Http::withToken(Crypt::decryptString(auth()->user()->getAuthPassword()))
+            ->withQueryParameters([
+                                      '_sort' => 'evntid',
+                                      '_limit' => 10,
+                                  ])
+            ->get('http://host.docker.internal/ready/api.php/REST/v1/events');
+
+        print_r($response->json());
+
+        die();
+
         $todos = Todo::all();
         return response()->json([
                                     'status' => 'success',
