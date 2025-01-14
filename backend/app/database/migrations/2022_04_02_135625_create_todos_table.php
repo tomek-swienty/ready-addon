@@ -17,6 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description');
+            $table->bigInteger('progress');
+            $table->bigInteger('stars');
+            $table->bigInteger('evntid');
             $table->timestamps();
         });
     }
