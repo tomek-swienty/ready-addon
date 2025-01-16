@@ -1,7 +1,6 @@
 import {
     Link,
     Links,
-    LiveReload,
     Meta,
     Outlet,
     Scripts,
@@ -9,25 +8,25 @@ import {
     useRouteError, isRouteErrorResponse, useNavigation , useLoaderData
 } from "@remix-run/react";
 
-import tailwindStyles from "./../src/tailwind.css"
-import {user} from "./services/auth.server"
+import type { LinksFunction } from "@remix-run/node";
+
+import appStylesHref from "./tailwind.css?url"
+import {photos} from "./services/auth.server"
 
 export const loader = async ({request}) => {
-    return await user({request});
+    return await photos({request});
 };
 
-export const links = () => {
-    return [
-        {rel: "stylesheet", href: tailwindStyles},
-    ];
-};
+export const links: LinksFunction = () => [
+    { rel: "stylesheet", href: appStylesHref },
+];
 
 export default function App() {
-    const user = useLoaderData();
-
+    const photos = useLoaderData();
+console.log(photos);
     return (
         <Document>
-            <Layout user={user}>
+            <Layout user={photos}>
                 <Outlet/>
             </Layout>
         </Document>
@@ -35,13 +34,22 @@ export default function App() {
 }
 
 export function ErrorBoundary({error}) {
-    console.error(error);
+
+    function isDefinitelyAnError(error: unknown) {
+        return error && (error instanceof Error || "message" in error)
+    }
+
+    let errorMessage = '';
+    if (isDefinitelyAnError(error)) {
+        errorMessage = error.message;
+    }
+
     return (
         <Document title="Error!">
             <Layout>
                 <div>
                     <h1>There was an error</h1>
-                    <p>{error.message}</p>
+                    <p>{errorMessage}</p>
                     <hr/>
                     <p>
                         Hey, developer, you should replace this with what you want your
@@ -122,7 +130,6 @@ function Document({children, title}) {
         {children}
         <ScrollRestoration/>
         <Scripts/>
-        {process.env.NODE_ENV === "development" && <LiveReload/>}
         </body>
         </html>
     );

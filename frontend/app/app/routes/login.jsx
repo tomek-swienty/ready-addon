@@ -1,4 +1,4 @@
-import {json, Link, Form, redirect, useActionData} from "remix";
+import {json, Link, Form, redirect, useActionData} from "@remix-run/react";
 import Errors from "./../components/errors"
 import Label from "./../components/label"
 import Input from "./../components/input"

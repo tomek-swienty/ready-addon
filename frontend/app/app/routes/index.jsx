@@ -1,4 +1,4 @@
-import {useLoaderData, Link} from "remix";
+import {useLoaderData, Link} from "@remix-run/react";
 import axios from "./../services/axios.server"
 
 export let loader = async () => {

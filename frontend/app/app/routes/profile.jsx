@@ -1,4 +1,4 @@
-import {useLoaderData, Link} from "remix";
+import {useLoaderData, Link} from "@remix-run/react";
 import {user, currentToken, requireAuth} from "./../services/auth.server"
 import axios from "./../services/axios.server"
 

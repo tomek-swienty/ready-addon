@@ -1,4 +1,5 @@
-import {createCookieSessionStorage, redirect} from "@remix-run/react";
+import {redirect} from "@remix-run/react";
+import { createCookieSessionStorage } from "@remix-run/node";
 import axios from "./axios.server"
 
 let storage = createCookieSessionStorage({
@@ -93,4 +94,17 @@ export async function requireAuth({request}) {
     if (!token) {
         throw redirect("/login");
     }
+};
+
+export async function photos() {
+    let response;
+
+    try {
+        response = await axios.get('/photos');
+    } catch (error) {
+
+        return error;
+    }
+
+    return response.data;
 };

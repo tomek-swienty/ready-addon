@@ -1,5 +1,5 @@
 import {logout} from './../services/auth.server'
-import {redirect} from "remix";
+import {redirect} from "@remix-run/react";
 
 export let action = async ({request}) => {
     return logout({request});
